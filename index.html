@@ -41,51 +41,63 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
-    <style>
+  <style>
+    body {
+      inset: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+    }
+
     #loading {
-      align-items: center;
-      background-color: #222222;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      background-color: #222222;
       justify-content: center;
       height: 100%;
-      width: 100%
+      width: 100%;
     }
 
     #loading h1 {
       color: #fff;
-      font-family: 'Roboto';
-      font-size: 36px;
-      font-weight: 300;
-      line-height: 32px;
-      margin-top: 20px;
-      text-align: center
+      font-family: 'Trebuchet MS';
+      font-size: 24px;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
   <div id="loading">
-    <h1><span id="procentValue"></span>%</h1>
+    <h1><span id="placeToProgressProcent"></span></h1>
   </div>
-  
+
   <script>
-    let procentValue = 0;
+    let progressProcent = 0;
     function timerForProgress() {
-      if (progressProcent < 99) {
-        progressProcent++;
-        document.getElementById("placeToProgressProcent").innerHTML = progressProcent;
+      if (progressProcent == 0) {
+        document.getElementById("placeToProgressProcent").innerHTML = "Загрузка ресурсов.";
+        progressProcent = 1;
+      }
+
+      else if (progressProcent == 1) {
+        document.getElementById("placeToProgressProcent").innerHTML = "Загрузка ресурсов..";
+        progressProcent = 2;
+      }
+
+      else if (progressProcent == 2) {
+        document.getElementById("placeToProgressProcent").innerHTML = "Загрузка ресурсов...";
+        progressProcent = 0;
       }
     }
+
     load();
 
-    window.addEventListener('load', function (ev) {
-      load();
-    });
-
     function load() {
-      const progressInterval = setInterval(timerForProgress, 200);
-      
+      const progressInterval = setInterval(timerForProgress, 250);
+
       loadScript('flutter.js').then(() => {
         // Download main.dart.js
         _flutter.loader.loadEntrypoint({
@@ -95,6 +107,7 @@
           onEntrypointLoaded: async function (app) {
             let appRunner = await app.initializeEngine();
             await appRunner.runApp();
+            document.querySelector('#loading').remove();
             clearInterval(progressInterval);
           }
         });
