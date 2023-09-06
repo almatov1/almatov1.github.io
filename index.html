@@ -78,7 +78,7 @@
           onEntrypointLoaded: async function (app) {
             let appRunner = await app.initializeEngine();
             await appRunner.runApp();
-            document.querySelector('#loader').remove();
+            if (document.querySelector('#loader') != null) document.querySelector('#loader').remove();
             clearInterval(progressInterval);
           }
         });
